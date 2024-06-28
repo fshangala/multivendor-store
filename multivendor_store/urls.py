@@ -19,12 +19,26 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from products.urls import productsRouter
 from stores.urls import storesRouter
+from orders.urls import ordersRouter
+from accounts.urls import accountsRouter
+from chats.urls import chatsRouter
+
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from oauth2_provider import urls as oauth2_urls
 
 router = DefaultRouter()
 router.registry.extend(productsRouter.registry)
 router.registry.extend(storesRouter.registry)
+router.registry.extend(ordersRouter.registry)
+router.registry.extend(accountsRouter.registry)
+router.registry.extend(chatsRouter.registry)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include(router.urls))
+    path('',include(router.urls)),
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('o/',include(oauth2_urls))
 ]
